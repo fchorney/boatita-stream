@@ -1,0 +1,20 @@
+[tool.black]
+target-version = ["py38"]
+
+[tool.coverage.run]
+relative_files = true
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = true
+exclude_lines = ["if __name__ == .__main__.:", "def __str__", "def __repr__", "pragma: no cover"]
+
+[tool.coverage.xml]
+output = "./dist/coverage.xml"
+
+[tool.isort]
+profile = "black"
+color_output = true
+lines_after_imports = 2
+combine_as_imports = true
