@@ -1,6 +1,5 @@
 import codecs
 from os.path import abspath, dirname, join
-from typing import List
 
 from setuptools import find_packages, setup
 
@@ -21,7 +20,7 @@ CHECK_DEPS = [
     "mypy",
     "black",
 ]
-REQUIREMENTS: List[str] = []
+REQUIREMENTS = ["pyyaml", "spotipy"]
 
 EXTRAS = {
     "test": TEST_DEPS,
@@ -60,6 +59,6 @@ setup(
     tests_require=TEST_DEPS,
     extras_require=EXTRAS,
     entry_points={
-        "console_scripts": ["spotify-title = stream_tools.spotify_title:main"]
+        "console_scripts": ["spotify-title = stream_tools.spotify.track_title:main"]
     },
 )

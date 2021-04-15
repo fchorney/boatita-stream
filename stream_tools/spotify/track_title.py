@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(args: Optional[Sequence[str]] = None) -> int:
+    parse_args(args)
     return 0
 
 
