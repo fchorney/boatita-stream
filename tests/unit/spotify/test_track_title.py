@@ -4,7 +4,7 @@ from stream_tools.spotify import track_title
 
 
 def test_main_no_args():
-    assert track_title.main() == 0
+    assert track_title.main([]) == 0
 
 
 def test_parse_args_default():

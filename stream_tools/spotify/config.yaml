@@ -1,0 +1,11 @@
+---
+spotify:
+  client_id: "CLIENT_ID"
+  client_secret: "CLIENT_SECRET"
+  redirect_uri: "REDIRECT_URI"
+
+track_title:
+  scope: "user-read-playback-state"
+  sleep_time: 5
+  market: "US"
+  file_path: "~/spotify-track-title.txt"

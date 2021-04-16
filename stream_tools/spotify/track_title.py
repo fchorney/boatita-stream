@@ -1,19 +1,35 @@
 import argparse
 import logging
+from pathlib import Path
 from typing import Optional, Sequence
+
+from .config_tools import get_default_config_file, parse_config_file
 
 
 logger = logging.getLogger(__name__)
 
 
 def main(args: Optional[Sequence[str]] = None) -> int:
-    parse_args(args)
+    pargs = parse_args(args)
+
+    config = parse_config_file(pargs.config)
+
+    print(config)
+
     return 0
 
 
 def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="spotify-title - Print the current playing Spotify track"
+        description="spotify-title - Print the current playing Spotify track",
+    )
+
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=Path,
+        default=get_default_config_file(),
+        help="Path to Spotify Config File",
     )
 
     logger_group_parent = parser.add_argument_group(
