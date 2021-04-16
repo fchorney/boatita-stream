@@ -1,9 +1,27 @@
 import logging
 
+from spotipy import Spotify as OGSpotify
+
 from stream_tools.spotify import track_title
 
+from .test_spotify_tools import mock_spotify  # noqa: F401
 
-def test_main_no_args():
+
+def test_login_with_config(mock_spotify):  # noqa: F811
+    api = track_title.login_with_config(
+        {
+            "spotify": {
+                "client_id": "test_client_id",
+                "client_secret": "test_client_secret",
+                "redirect_uri": "test_redirect_uri",
+            },
+            "track_title": {"scope": "test_scope"},
+        }
+    )
+    assert type(api) != OGSpotify
+
+
+def test_main_no_args(mock_spotify):  # noqa: F811
     assert track_title.main([]) == 0
 
 

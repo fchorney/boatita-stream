@@ -9,3 +9,5 @@ track_title:
   sleep_time: 5
   market: "US"
   file_path: "~/spotify-track-title.txt"
+  no_track_msg: "No Track Currently Playing - "
+  track_msg: "{track_name} by {artist_name} - "

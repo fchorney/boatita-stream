@@ -8,6 +8,9 @@ from yaml import Loader, load
 
 logger = logging.getLogger(__name__)
 
+# Custom Dict Type for Config File
+Config_Dict = Dict[str, Dict[str, Union[str, int]]]
+
 
 def get_default_config_file() -> Path:
     return Path.home() / ".stream-tools" / "spotify-config.yaml"
@@ -30,7 +33,7 @@ def create_config_file(config_path: Path) -> None:
     shutil.copyfile(example_config_file, abspath)
 
 
-def parse_config_file(config_path: Path) -> Dict[str, Dict[str, Union[str, int]]]:
+def parse_config_file(config_path: Path) -> Config_Dict:
     if not config_file_exists(config_path):
         create_config_file(config_path)
 

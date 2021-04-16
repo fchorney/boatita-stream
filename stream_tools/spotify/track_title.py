@@ -3,18 +3,39 @@ import logging
 from pathlib import Path
 from typing import Optional, Sequence
 
-from .config_tools import get_default_config_file, parse_config_file
+import spotipy
+
+from .config_tools import Config_Dict, get_default_config_file, parse_config_file
+from .spotify_tools import get_current_track, login
 
 
 logger = logging.getLogger(__name__)
 
 
+def login_with_config(config: Config_Dict) -> spotipy.Spotify:
+    return login(
+        str(config["spotify"]["client_id"]),
+        str(config["spotify"]["client_secret"]),
+        str(config["spotify"]["redirect_uri"]),
+        str(config["track_title"]["scope"]),
+    )
+
+
+def run_track_title(config: Config_Dict, api: spotipy.Spotify) -> None:
+    pass
+
+
 def main(args: Optional[Sequence[str]] = None) -> int:
     pargs = parse_args(args)
 
+    logging.basicConfig(level=pargs.log_level)
+
     config = parse_config_file(pargs.config)
 
-    print(config)
+    spotify_api = login_with_config(config)
+
+    print(get_current_track(spotify_api))
+    run_track_title(config, spotify_api)
 
     return 0
 
