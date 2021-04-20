@@ -1,12 +1,18 @@
 import argparse
 import logging
+import time
 from pathlib import Path
 from typing import Optional, Sequence
 
 import spotipy
 
-from .config_tools import Config_Dict, get_default_config_file, parse_config_file
-from .spotify_tools import get_current_track, login
+from stream_tools.spotify.config_tools import (
+    Config_Dict,
+    get_default_config_file,
+    parse_config_file,
+)
+from stream_tools.spotify.spotify_tools import get_current_track, login
+from stream_tools.utils import create_filepath_parents
 
 
 logger = logging.getLogger(__name__)
@@ -21,22 +27,53 @@ def login_with_config(config: Config_Dict) -> spotipy.Spotify:
     )
 
 
-def run_track_title(config: Config_Dict, api: spotipy.Spotify) -> None:
-    pass
+def get_current_track_with_config(api: spotipy.Spotify, config: Config_Dict) -> str:
+    return get_current_track(
+        api,
+        track_msg=str(config["track_title"]["track_msg"]),
+        no_track_msg=str(config["track_title"]["no_track_msg"]),
+        market=str(config["track_title"]["market"]),
+    )
+
+
+def run_track_title(config: Config_Dict, api: spotipy.Spotify, forever: bool) -> None:
+    sleep_time = int(config["track_title"]["sleep_time"])
+    filepath = Path(str(config["track_title"]["file_path"]))
+    create_filepath_parents(filepath)
+
+    logger.info(f"Sleep Time: {sleep_time}")
+    logger.info(f"Filepath: {filepath}")
+
+    current_track = ""
+    try:
+        while True:
+            track = get_current_track_with_config(api, config)
+
+            if track != current_track:
+                current_track = track
+                logger.info(f"Track Changed to: {track}")
+                with filepath.open("w") as f:
+                    f.write(track)
+
+            if not forever:
+                break
+
+            time.sleep(sleep_time)
+    except KeyboardInterrupt:
+        pass
 
 
 def main(args: Optional[Sequence[str]] = None) -> int:
     pargs = parse_args(args)
+    forever = pargs.forever
 
     logging.basicConfig(level=pargs.log_level)
 
     config = parse_config_file(pargs.config)
-
     spotify_api = login_with_config(config)
+    run_track_title(config, spotify_api, forever)
 
-    print(get_current_track(spotify_api))
-    run_track_title(config, spotify_api)
-
+    print("Exiting")
     return 0
 
 
@@ -51,6 +88,13 @@ def parse_args(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
         type=Path,
         default=get_default_config_file(),
         help="Path to Spotify Config File",
+    )
+
+    parser.add_argument(
+        "-f",
+        "--forever",
+        action="store_true",
+        help="Run forever until a CTRL-C is detected",
     )
 
     logger_group_parent = parser.add_argument_group(

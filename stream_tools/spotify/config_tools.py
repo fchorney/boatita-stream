@@ -5,6 +5,8 @@ from typing import Dict, Union
 
 from yaml import Loader, load
 
+from stream_tools.utils import create_filepath_parents
+
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +28,9 @@ def get_example_config_file() -> Path:
 
 
 def create_config_file(config_path: Path) -> None:
-    abspath = config_path.resolve()
-    abspath.parent.mkdir(parents=True, exist_ok=True)
-
+    create_filepath_parents(config_path)
     example_config_file = get_example_config_file()
-    shutil.copyfile(example_config_file, abspath)
+    shutil.copyfile(example_config_file, config_path)
 
 
 def parse_config_file(config_path: Path) -> Config_Dict:
